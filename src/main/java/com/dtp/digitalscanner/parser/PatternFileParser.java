@@ -3,29 +3,22 @@ package com.dtp.digitalscanner.parser;
 import com.dtp.digitalscanner.exception.DigitalScannerValidationException;
 import com.dtp.digitalscanner.validation.BaseValidator;
 import com.dtp.digitalscanner.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
 
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
+@Slf4j
 public class PatternFileParser {
 
-    private Scanner scanner;
-    private Validator validator;
+    private final Scanner scanner;
+    private final Validator validator;
 
     public PatternFileParser(String filePath, Validator validator) {
-        try {
-            this.scanner = new Scanner(new File(filePath)).useDelimiter("\n");
+        this.scanner = new Scanner(getClass().getResourceAsStream(filePath)).useDelimiter("\n");
+        this.validator = validator;
 
-            this.validator = validator;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     public PatternFileParser(String filePath) {
@@ -36,14 +29,13 @@ public class PatternFileParser {
 
         List<String> numberLines = new ArrayList<>();
         String line = getNextLine();
-        boolean validationFailedStatus = false;
+        boolean isValidationSuccess = false;
         while (!isLineSeparator(line)) {
-            validationFailedStatus = validationFailedStatus || validator.validate(line); 
-            if(validationFailedStatus){
+            isValidationSuccess = validator.validate(line);
+            if (!isValidationSuccess) {
                 numberLines = new ArrayList<>();
                 numberLines.add("Bad input");
-            }
-            else{
+            } else {
                 numberLines.add(line);
             }
             line = getNextLine();
@@ -61,7 +53,7 @@ public class PatternFileParser {
         }
         return "";
     }
-    
+
     public boolean hasNextNumberPatternLine() {
         return scanner.hasNextLine();
     }

@@ -8,29 +8,26 @@ import com.dtp.digitalscanner.parser.PatternFileParser;
 import java.util.List;
 
 public class DigitalNumberScanner {
-    public static void main(String[] args) throws DigitalScannerValidationException {
-        //PatternFileParser patternFileReader = new PatternFileParser("./src/main/resources/singleChunk.txt");
-        PatternFileParser patternFileReader = new PatternFileParser("./src/main/resources/multipleChunks.txt");
-        //PatternFileParser patternFileReader = new PatternFileParser("./src/main/resources/multipleChunksWithIllegalRow.txt");
-        NumberInterpreter numberInterpreter = new NumberInterpreter();
-        while (patternFileReader.hasNextNumberPatternLine()) {
-            List<String> nextNumberPatternLines = patternFileReader.getNextNumberPatternLines();
 
-            List<String> singleChunkNumbers = null;
-            try {
-                singleChunkNumbers = numberInterpreter.getAllNumbers(nextNumberPatternLines, 27);
-            } catch (InvalidPatternException e) {
-                e.printStackTrace();
+    public String analyseAndPrint(String filePath) throws DigitalScannerValidationException, InvalidPatternException {
+        PatternFileParser parser = new PatternFileParser(filePath);
+        NumberInterpreter numberInterpreter = new NumberInterpreter();
+        StringBuilder builder = new StringBuilder();
+        while (parser.hasNextNumberPatternLine()) {
+
+            List<String> numberCodesString = numberInterpreter.getNumbersAsString(parser.getNextNumberPatternLines(), 27);
+            if (numberCodesString != null) {
+                numberCodesString.forEach(numberCode -> {
+                    int number = numberInterpreter.matchNumber(numberCode);
+                    if (number > -1) {
+                        builder.append(number);
+                    }
+                });
             }
-            singleChunkNumbers.forEach(singleChunk -> {
-                int number = numberInterpreter.getNumber(singleChunk);
-                if (number > -1) {
-                    System.out.print(numberInterpreter.getNumber(singleChunk));
-                }
-            });
+            builder.append("\n");
 
         }
-        System.out.println("");
+        System.out.println(builder.toString());
+        return builder.toString();
     }
-
 }

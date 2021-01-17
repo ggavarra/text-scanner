@@ -11,10 +11,10 @@ public class BaseValidator implements Validator{
 
 
     public boolean validate(String line) throws DigitalScannerValidationException {
-       /* if(!line.isEmpty() && line.length()<27)
-            throw new DigitalScannerValidationException("String length expected to be "+STRING_MAX_LENGTH+" but found "+line.length());*/
-
-        return true;
+        /*if(!line.isEmpty() && line.length()<27)
+            throw new DigitalScannerValidationException("String length expected to be "+STRING_MAX_LENGTH+" but found "+line.length());
+*/
+        return !line.isEmpty() && line.length()<27;
     }
 
 }

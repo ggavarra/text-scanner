@@ -2,6 +2,8 @@ package com.dtp.digitalscanner;
 
 import com.dtp.digitalscanner.exception.DigitalScannerValidationException;
 import com.dtp.digitalscanner.exception.InvalidPatternException;
+import com.dtp.digitalscanner.helper.NumberInterpreter;
+import com.dtp.digitalscanner.parser.PatternFileParser;
 
 import java.util.List;
 
@@ -11,24 +13,24 @@ public class DigitalNumberScanner {
         PatternFileParser patternFileReader = new PatternFileParser("./src/main/resources/multipleChunks.txt");
         //PatternFileParser patternFileReader = new PatternFileParser("./src/main/resources/multipleChunksWithIllegalRow.txt");
         NumberInterpreter numberInterpreter = new NumberInterpreter();
-        while(patternFileReader.hasNextNumberPatternLine()){
+        while (patternFileReader.hasNextNumberPatternLine()) {
             List<String> nextNumberPatternLines = patternFileReader.getNextNumberPatternLines();
 
             List<String> singleChunkNumbers = null;
             try {
-                singleChunkNumbers = numberInterpreter.getAllNumbers(nextNumberPatternLines,27);
+                singleChunkNumbers = numberInterpreter.getAllNumbers(nextNumberPatternLines, 27);
             } catch (InvalidPatternException e) {
                 e.printStackTrace();
             }
             singleChunkNumbers.forEach(singleChunk -> {
-                    int number=numberInterpreter.getNumber(singleChunk);
-                    if(number>-1) {
-                        System.out.print(numberInterpreter.getNumber(singleChunk));
-                    }
-                });
+                int number = numberInterpreter.getNumber(singleChunk);
+                if (number > -1) {
+                    System.out.print(numberInterpreter.getNumber(singleChunk));
+                }
+            });
 
-            }
-            System.out.println("");
         }
+        System.out.println("");
+    }
 
 }

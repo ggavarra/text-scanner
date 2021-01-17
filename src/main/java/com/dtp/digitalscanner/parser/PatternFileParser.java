@@ -1,4 +1,4 @@
-package com.dtp.digitalscanner;
+package com.dtp.digitalscanner.parser;
 
 import com.dtp.digitalscanner.exception.DigitalScannerValidationException;
 import com.dtp.digitalscanner.validation.BaseValidator;
@@ -21,7 +21,7 @@ public class PatternFileParser {
         try {
             this.scanner = new Scanner(new File(filePath)).useDelimiter("\n");
 
-            this.validator=validator;
+            this.validator = validator;
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -36,10 +36,17 @@ public class PatternFileParser {
 
         List<String> numberLines = new ArrayList<>();
         String line = getNextLine();
+        boolean validationFailedStatus = false;
         while (!isLineSeparator(line)) {
-            numberLines.add(line);
+            validationFailedStatus = validationFailedStatus || validator.validate(line); 
+            if(validationFailedStatus){
+                numberLines = new ArrayList<>();
+                numberLines.add("Bad input");
+            }
+            else{
+                numberLines.add(line);
+            }
             line = getNextLine();
-            validator.validate(line);
         }
         return numberLines;
     }
@@ -49,14 +56,13 @@ public class PatternFileParser {
     }
 
     private String getNextLine() {
-        if (scanner.hasNext()) {
+        if (scanner.hasNextLine()) {
             return scanner.nextLine();
         }
         return "";
     }
-
-
+    
     public boolean hasNextNumberPatternLine() {
-        return scanner.hasNextLine() ;
+        return scanner.hasNextLine();
     }
 }

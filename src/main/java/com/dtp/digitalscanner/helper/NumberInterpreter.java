@@ -1,4 +1,4 @@
-package com.dtp.digitalscanner;
+package com.dtp.digitalscanner.helper;
 
 import com.dtp.digitalscanner.exception.InvalidPatternException;
 
@@ -12,11 +12,10 @@ public class NumberInterpreter {
     //represents 0-9 as string
     private static final String[] comparisonArray = {" _ | ||_|","     |  |"," _  _||_ "," _  _| _|","   |_|  |"," _ |_  _|"," _ |_ |_|"," _   |  |"," _ |_||_|"," _ |_| _|"};
 
-    List<String> comparisonList = Arrays.asList(comparisonArray);
+    final List<String> comparisonList = Arrays.asList(comparisonArray);
 
     public int getNumber(String singleNumberpattern){
-        int matchIndex=comparisonList.indexOf(singleNumberpattern);
-        return matchIndex;
+        return comparisonList.indexOf(singleNumberpattern);
     }
 
 

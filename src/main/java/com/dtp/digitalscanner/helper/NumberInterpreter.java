@@ -2,6 +2,7 @@ package com.dtp.digitalscanner.helper;
 
 import com.dtp.digitalscanner.exception.InvalidPatternException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,20 +17,25 @@ public class NumberInterpreter {
 
     final List<String> comparisonList = Arrays.asList(comparisonArray);
 
+    public String matchNumberAsString(String singleNumberPattern) {
+        int index = matchNumber(singleNumberPattern);
+        if (index < 0 && !StringUtils.isBlank(singleNumberPattern)) return "?";
+        return String.valueOf(index);
+    }
+
     public int matchNumber(String singleNumberPattern) {
         return comparisonList.indexOf(singleNumberPattern);
     }
 
-
     public List<String> getNumbersAsString(List<String> patternLines, int length) throws InvalidPatternException {
 
         List<String> numbersString = new ArrayList<>();
-        for (int i = 0; i <= length - 3; i++) {
+        for (int i = 0; i <= length - 3; i = i + 3) {
             String digitalNumAsString = patternLines.get(0).substring(i, i + 3) + patternLines.get(1).substring(i, i + 3) + patternLines.get(2).substring(i, i + 3);
             if (digitalNumAsString.length() != 9) {
                 throw new InvalidPatternException(digitalNumAsString);
             }
-
+          
             log.trace("i =" + i + ",length = " + digitalNumAsString.length() + "," + digitalNumAsString);
             numbersString.add(digitalNumAsString);
         }

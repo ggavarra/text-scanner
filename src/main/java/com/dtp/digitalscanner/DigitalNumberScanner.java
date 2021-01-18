@@ -6,6 +6,7 @@ import com.dtp.digitalscanner.helper.NumberInterpreter;
 import com.dtp.digitalscanner.parser.PatternFileParser;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DigitalNumberScanner {
 
@@ -13,16 +14,21 @@ public class DigitalNumberScanner {
         PatternFileParser parser = new PatternFileParser(filePath);
         NumberInterpreter numberInterpreter = new NumberInterpreter();
         StringBuilder builder = new StringBuilder();
+        AtomicInteger invalidCharCountPerLine = new AtomicInteger(0);
         while (parser.hasNextNumberPatternLine()) {
 
             List<String> numberCodesString = numberInterpreter.getNumbersAsString(parser.getNextNumberPatternLines(), 27);
+            invalidCharCountPerLine.set(0);
             if (numberCodesString != null) {
-                numberCodesString.forEach(numberCode -> {
-                    int number = numberInterpreter.matchNumber(numberCode);
-                    if (number > -1) {
-                        builder.append(number);
-                    }
+                numberCodesString.forEach((numberCode) -> {
+                    String number = numberInterpreter.matchNumberAsString(numberCode);
+                    if (number == "?") invalidCharCountPerLine.incrementAndGet();
+                    builder.append(number);
                 });
+            }
+
+            if (invalidCharCountPerLine.get() > 0) {
+                builder.append("ILL");
             }
             builder.append("\n");
 
@@ -30,4 +36,5 @@ public class DigitalNumberScanner {
         System.out.println(builder.toString());
         return builder.toString();
     }
+
 }

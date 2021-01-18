@@ -4,6 +4,7 @@ import com.dtp.digitalscanner.exception.DigitalScannerValidationException;
 import com.dtp.digitalscanner.validation.BaseValidator;
 import com.dtp.digitalscanner.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +33,7 @@ public class PatternFileParser {
         boolean isValidationSuccess = false;
         while (!isLineSeparator(line)) {
             isValidationSuccess = validator.validate(line);
-            if (!isValidationSuccess) {
-                numberLines = new ArrayList<>();
-                numberLines.add("Bad input");
-            } else {
+            if (isValidationSuccess) {
                 numberLines.add(line);
             }
             line = getNextLine();
@@ -44,7 +42,7 @@ public class PatternFileParser {
     }
 
     private boolean isLineSeparator(String line) {
-        return line.isEmpty();
+        return StringUtils.isBlank(line);
     }
 
     private String getNextLine() {
